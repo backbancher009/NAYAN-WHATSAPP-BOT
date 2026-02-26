@@ -3,7 +3,7 @@ const { downloadMediaMessage } = require('@whiskeysockets/baileys');
 module.exports = {
   config: {
     name: 'viewOnce',
-    aliases: ['view', 'vv'],
+    aliases: ['view', 'val'],
     permission: 0,
     prefix: true,
     description: 'Resend quoted media (image, video, gif, audio) directly.',
