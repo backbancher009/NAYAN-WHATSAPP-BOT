@@ -1,12 +1,12 @@
 module.exports = {
   config: {
     name: 'profilepic',
-    aliases: ['pp', 'avatar'],
+    aliases: ['plp', 'avatar'],
     permission: 0,
     prefix: 'both',
     description: 'Send the profile picture of the mentioned user or yourself.',
     categories: 'media',
-    usages: [`${global.config.PREFIX}profilepic`, `${global.config.PREFIX}profilepic @mention`],
+    usages: [`${global.config.PREFIX}profilepic`, `${global.config.PREFIX}profilepic`],
     credit: 'Developed by Mohammad Nayan',
   },
 
