@@ -1,32 +1,47 @@
-module.exports = {
-  config: {
-    name: 'ping',
-    aliases: ['p'],
-    permission: 0,
-    prefix: 'both',
-    categories: 'system',
-    description: 'Check bot response time',
-    usages: [
-      'ping',
-      'p'
-    ],
-    credit: 'Modified by Emon-Bhai'
-  },
+const os = require('os');
+const settings = require('../settings.js');
 
-  start: async ({ event, api }) => {
-    const { threadId } = event;
+function formatTime(seconds) {
+    const days = Math.floor(seconds / (24 * 60 * 60));
+    seconds = seconds % (24 * 60 * 60);
+    const hours = Math.floor(seconds / (60 * 60));
+    seconds = seconds % (60 * 60);
+    const minutes = Math.floor(seconds / 60);
+    seconds = Math.floor(seconds % 60);
 
-    
-    const responses = [
-      "🏓 Pong! I'm alive ⚡",
-      "⚡ Bot online & responsive!",
-      "🚀 Speed check: OK!",
-      "✅ System running smoothly!"
-    ];
+    let time = '';
+    if (days > 0) time += `${days}d `;
+    if (hours > 0) time += `${hours}h `;
+    if (minutes > 0) time += `${minutes}m `;
+    if (seconds > 0 || time === '') time += `${seconds}s`;
 
-    
-    const reply = responses[Math.floor(Math.random() * responses.length)];
+    return time.trim();
+}
 
-    await api.sendMessage(threadId, { text: reply });
-  },
-};
+async function pingCommand(sock, chatId, message) {
+    try {
+        const start = Date.now();
+        await sock.sendMessage(chatId, { text: 'Pong!' }, { quoted: message });
+        const end = Date.now();
+        const ping = Math.round((end - start) / 2);
+
+        const uptimeInSeconds = process.uptime();
+        const uptimeFormatted = formatTime(uptimeInSeconds);
+
+        const botInfo = `
+┏━━〔 🤖 𝐓𝐞𝐝𝐝𝐲-𝐁𝐨𝐭 〕━━┓
+┃ 🚀 Ping     : ${ping} ms
+┃ ⏱️ Uptime   : ${uptimeFormatted}
+┃ 🔖 Version  : v${settings.version}
+┗━━━━━━━━━━━━━━━━━━━┛`.trim();
+
+        // Reply to the original message with the bot info
+        await sock.sendMessage(chatId, { text: botInfo},{ quoted: message });
+
+    } catch (error) {
+        console.error('Error in ping command:', error);
+        await sock.sendMessage(chatId, { text: '❌ Failed to get bot status.' });
+    }
+}
+
+module.exports = pingCommand;
